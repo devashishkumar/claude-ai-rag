@@ -78,8 +78,6 @@ node rag-claude.js --build
 
 This will:
 - Load all `.txt` and `.pdf` files from `./docs`
-- Compute embeddings for each document
-- Cache embeddings in `.embeddings_cache.json` (to skip redundant API calls)
 
 ### 2. Ask a Question
 

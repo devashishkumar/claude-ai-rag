@@ -1,0 +1,17 @@
+{
+  "name": "cloude-ai-rag",
+  "version": "1.0.0",
+  "main": "rag-claude.js",
+  "scripts": {
+    "start": "node ./rag-claude.js",
+    "build-index": "node ./rag-claude.js --build",
+    "ask": "node ./rag-claude.js --ask"
+  },
+  "author": "Ashish",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "pdf-parse": "^2.4.5"
+  }
+}

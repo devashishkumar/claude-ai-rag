@@ -53,16 +53,16 @@ function chunkText(text, chunkSize = 1000) {
 // -------- STEP 4: Simple keyword retrieval --------
 function simpleSearch(chunks, query) {
   return chunks
-    .map(chunk => ({
+    .map((chunk) => ({
       chunk,
       score: query
         .toLowerCase()
         .split(" ")
-        .filter(word => chunk.toLowerCase().includes(word)).length,
+        .filter((word) => chunk.toLowerCase().includes(word)).length,
     }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
-    .map(result => result.chunk);
+    .map((result) => result.chunk);
 }
 
 // -------- STEP 5: Ask Claude --------
@@ -99,11 +99,24 @@ If the answer is not in the context, say you don't know.
 async function main() {
   try {
     const folderPath = "./docs"; // folder containing PDF and TXT files
+
+    // Grab the question from CLI arguments
+    const args = process.argv.slice(2);
+    let question = "What are these documents about?"; // default question
+    if (args.length > 0) {
+      //   console.error("Please provide a question as a CLI argument.");
+      //   console.error("Example: node index.js \"What is this about?\"");
+      //   process.exit(1);
+      question = args.join(" ");
+    }
+
     const allText = await loadDocsFolder(folderPath);
-    console.log(`Loaded all files from ${folderPath}, total length:`, allText.length);
+    console.log(
+      `Loaded all files from ${folderPath}, total length:`,
+      allText.length,
+    );
 
     const chunks = chunkText(allText);
-    const question = "What are the main topics in these documents?";
 
     const relevantChunks = simpleSearch(chunks, question);
     const answer = await askClaude(relevantChunks, question);

@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const pdfParse = require("pdf-parse"); // pdf-parse@1.1.1
+const mammoth = require("mammoth"); // used for .docx text extraction
 const Anthropic = require("@anthropic-ai/sdk");
 require("dotenv").config();
 
@@ -19,6 +20,11 @@ async function loadFile(filePath) {
     return data.text;
   } else if (ext === ".txt") {
     return fs.readFileSync(filePath, "utf-8");
+  } else if (ext === ".docx") {
+    // use mammoth to extract raw text from DOCX
+    const buffer = fs.readFileSync(filePath);
+    const result = await mammoth.extractRawText({ buffer });
+    return result.value;
   } else {
     return ""; // skip unsupported files
   }
@@ -98,7 +104,7 @@ If the answer is not in the context, say you don't know.
 // -------- MAIN --------
 async function main() {
   try {
-    const folderPath = "./docs"; // folder containing PDF and TXT files
+    const folderPath = "./docs"; // folder containing PDF, TXT, and DOCX files
 
     // Grab the question from CLI arguments
     const args = process.argv.slice(2);

@@ -4,7 +4,7 @@ A Node.js Retrieval-Augmented Generation (RAG) system that uses Claude (Anthropi
 
 ## Features
 
-- **Multi-Format Document Loading**: Reads `.txt` and `.pdf` files from a `./docs` folder
+- **Multi-Format Document Loading**: Reads `.txt`, `.pdf`, and `.docx` files from a `./docs` folder
 - **PDF Extraction**: Uses `pdf-parse` library for reliable PDF text extraction
 - **Keyword-Based Retrieval**: Simple but effective search using term matching
 - **Claude Integration**: Uses official `@anthropic-ai/sdk` for API calls
@@ -23,7 +23,7 @@ A Node.js Retrieval-Augmented Generation (RAG) system that uses Claude (Anthropi
 # Clone or navigate to the project directory
 cd cloude-ai-rag
 
-# Install dependencies
+# Install dependencies (includes pdf-parse, mammoth for DOCX, etc.)
 npm install
 ```
 
@@ -45,7 +45,7 @@ Place your documents in a `./docs` folder:
 ./docs/
   ├── document1.txt
   ├── document2.pdf
-  ├── document3.pdf
+  ├── document3.docx
   └── ...
 ```
 
@@ -93,7 +93,7 @@ node rag-claude.js
 ### Text Loading Pipeline
 
 ```
-[PDF/TXT Files] 
+[PDF/TXT/DOCX Files] 
       ↓
  [loadFile()]     → Extract text from individual files
       ↓
@@ -122,7 +122,7 @@ node rag-claude.js
 
 | Function | Purpose |
 |----------|---------|
-| `loadFile(filePath)` | Load and extract text from a single PDF or TXT file |
+| `loadFile(filePath)` | Load and extract text from a single PDF, TXT or DOCX file |
 | `loadDocsFolder(folderPath)` | Load all documents from the `./docs` folder |
 | `chunkText(text, chunkSize)` | Split text into manageable chunks (default: 1000 chars) |
 | `simpleSearch(chunks, query)` | Keyword-based retrieval; returns top-3 matching chunks |
@@ -212,7 +212,6 @@ npm install
 
 - [ ] Implement embedding-based retrieval (currently keyword-based)
 - [ ] Add response caching to reduce API calls
-- [ ] Support for additional file formats (DOCX, Markdown, etc.)
 - [ ] Interactive Q&A mode for multiple questions
 - [ ] Embeddings cache persistence
 

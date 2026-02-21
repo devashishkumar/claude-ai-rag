@@ -47,6 +47,35 @@ async function loadDocsFolder(folderPath) {
   return allText;
 }
 
+// -------- CACHE UTILITIES --------
+const crypto = require("crypto");
+const cachePath = path.resolve(__dirname, "cache.json");
+let responseCache = null;
+
+function loadCache() {
+  if (responseCache !== null) return responseCache;
+  try {
+    if (fs.existsSync(cachePath)) {
+      const raw = fs.readFileSync(cachePath, "utf-8");
+      responseCache = JSON.parse(raw);
+    } else {
+      responseCache = {};
+    }
+  } catch (e) {
+    console.warn("Failed to load cache, starting fresh", e);
+    responseCache = {};
+  }
+  return responseCache;
+}
+
+function saveCache() {
+  try {
+    fs.writeFileSync(cachePath, JSON.stringify(responseCache, null, 2), "utf-8");
+  } catch (e) {
+    console.warn("Failed to save cache", e);
+  }
+}
+
 // -------- STEP 3: Chunk text --------
 function chunkText(text, chunkSize = 1000) {
   const chunks = [];
@@ -74,6 +103,18 @@ function simpleSearch(chunks, query) {
 // -------- STEP 5: Ask Claude --------
 async function askClaude(contextChunks, question) {
   const context = contextChunks.join("\n\n");
+  const cache = loadCache();
+
+  // build a cache key using question and the context hash
+  const key = crypto
+    .createHash("sha256")
+    .update(question + "||" + context)
+    .digest("hex");
+
+  if (cache[key]) {
+    console.log("Cache hit for question. Returning cached answer.");
+    return cache[key];
+  }
 
   const response = await anthropic.messages.create({
     model: "claude-3-5-sonnet-20241022",
@@ -98,7 +139,10 @@ If the answer is not in the context, say you don't know.
     ],
   });
 
-  return response.content[0].text;
+  const answer = response.content[0].text;
+  cache[key] = answer;
+  saveCache();
+  return answer;
 }
 
 // -------- MAIN --------

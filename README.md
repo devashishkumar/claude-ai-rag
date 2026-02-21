@@ -9,6 +9,7 @@ A Node.js Retrieval-Augmented Generation (RAG) system that uses Claude (Anthropi
 - **Keyword-Based Retrieval**: Simple but effective search using term matching
 - **Claude Integration**: Uses official `@anthropic-ai/sdk` for API calls
 - **CLI Arguments**: Pass custom questions via command line (no code editing needed)
+- **Response Caching**: Answers are saved to `cache.json` so repeated queries with the same context return instantly without additional API calls
 - **Easy Setup**: Minimal configuration required
 
 ## Prerequisites
@@ -48,6 +49,10 @@ Place your documents in a `./docs` folder:
   ├── document3.docx
   └── ...
 ```
+
+### 2. Run the Script
+
+> **Caching note:** The script now stores answers in `cache.json` next to the code. If you ask the same question again with unchanged documents, the answer will come from the cache and the API will not be called.
 
 ### 2. Run the Script
 
@@ -122,6 +127,17 @@ node rag-claude.js
 
 | Function | Purpose |
 |----------|---------|
+| `loadCache()` | Read existing cache from `cache.json` |
+| `saveCache()` | Persist cache object to disk |
+| `chunkText(text, chunkSize)` | Split text into manageable chunks (default: 1000 chars) |
+| `simpleSearch(chunks, query)` | Keyword-based retrieval; returns top-3 matching chunks |
+| `askClaude(contextChunks, question)` | Call Claude API with context and question; uses cache to avoid repeat calls |
+| `main()` | Main entry point |
+
+## Configuration
+
+| Function | Purpose |
+|----------|---------|
 | `loadFile(filePath)` | Load and extract text from a single PDF, TXT or DOCX file |
 | `loadDocsFolder(folderPath)` | Load all documents from the `./docs` folder |
 | `chunkText(text, chunkSize)` | Split text into manageable chunks (default: 1000 chars) |
@@ -167,6 +183,21 @@ max_tokens: 2000, // increase from 1000
 
 ## Output Example
 
+```bash
+# first run (cache miss)
+Loaded all files from ./docs, total length: 45238
+
+Answer:
+ Based on the documents, the main topics covered are: ...
+
+# second run (cache hit)
+Loaded all files from ./docs, total length: 45238
+Cache hit for question. Returning cached answer.
+Answer:
+ Based on the documents, the main topics covered are: ...
+```
+
+
 ```
 Loaded all files from ./docs, total length: 45238
 
@@ -211,7 +242,6 @@ npm install
 ## Future Enhancements
 
 - [ ] Implement embedding-based retrieval (currently keyword-based)
-- [ ] Add response caching to reduce API calls
 - [ ] Interactive Q&A mode for multiple questions
 - [ ] Embeddings cache persistence
 

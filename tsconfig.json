@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                   // private class fields supported
+    "module": "CommonJS",                 // Node.js style modules
+    "strict": true,                       // recommended
+    "esModuleInterop": true,              // allows default imports from CommonJS
+    "allowSyntheticDefaultImports": true, // same as above
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,                 // ignore type errors in node_modules
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "outDir": "./dist"                     // compiled JS goes here
+  },
+  "include": ["*.ts"]                     // your TS files
+}

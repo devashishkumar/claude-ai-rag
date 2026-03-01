@@ -65,6 +65,13 @@ node rag-claude.js "What are the main topics in these documents?"
 ```bash
 node rag-claude.js
 ```
+
+### TypeScript Version
+
+```bash
+npx ts-node rag-claude.ts "What are the main topics in these documents?"
+```
+
 (Runs with default: "What are these documents about?")
 
 The script will:
